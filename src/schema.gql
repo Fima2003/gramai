@@ -1,0 +1,178 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserSettings {
+  user_id: ID!
+  full_name: String!
+  telegram: Float
+  locale: String!
+  timezone: String!
+  verified_email: Boolean!
+  email: String!
+  updated_at: DateTime!
+  user: User!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type User {
+  id: ID!
+  access: String!
+  created_at: DateTime!
+}
+
+type SmmPack {
+  """UUID of smm pack"""
+  id: ID!
+
+  """Amount of Users"""
+  amount_of_users: Int!
+  name: String!
+  system: String!
+  language: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type UserSmmPackRelation {
+  smm_pack_id: ID!
+  user_id: ID!
+  created_at: DateTime!
+}
+
+type TgChannel {
+  id: ID!
+  username: String
+  smm_pack_id: String!
+  created_at: DateTime!
+  name: String!
+}
+
+type Post {
+  id: ID!
+  status: post_status!
+  send_at: DateTime
+  text: String!
+  smm_pack_id: ID!
+  user_id: ID!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+enum post_status {
+  WAITING
+  CREATED
+  SENT
+  CANCELLED
+}
+
+type PostTelegramRelation {
+  tg_channel_id: Int!
+  post_id: ID!
+  tg_message_id: Int
+}
+
+type Query {
+  users: [User!]
+  user(id: String!): User
+  userSettingsAll: [UserSettings!]
+  userSettings(id: String!): UserSettings
+  usersSmmPackRelationship: [UserSmmPackRelation!]!
+  usersSmmPackRelationshipsByUserId(user_id: ID, pack_id: ID): [UserSmmPackRelation!]!
+  smmPacks: [SmmPack!]!
+  smmPack(id: String!): SmmPack
+  tgChannels: [TgChannel!]
+  tgChannel(id: Int!): TgChannel
+  posts: [Post!]
+  post(id: ID!): Post
+  postTelegramRelations: [PostTelegramRelation!]!
+  postTelegramRelation(tg_channel_id: Int, post_id: String): PostTelegramRelation!
+}
+
+type Mutation {
+  removeUser(id: String!): Int!
+  updateUserSettings(id: String!, updateUserSettingInput: UpdateUserSettingInput!): Int
+  createUsersSmmPackRelationship(user_id: ID!, pack_id: ID!): UserSmmPackRelation!
+  createSmmPack(user_id: String!, createSmmPackInput: CreateSmmPackInput): SmmPack!
+  updateSmmPack(id: String!, updateSmmPackInput: UpdateSmmPackInput!): Int!
+  removeSmmPack(id: String!): Int!
+  createTgChannel(createTgChannelInput: CreateTgChannelInput!): TgChannel!
+  updateTgChannel(id: Float!, updateTgChannelInput: UpdateTgChannelInput!): Int!
+  removeTgChannel(id: Int!): Int!
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(id: String!, updatePostInput: UpdatePostInput!): Int!
+  removePost(id: ID!): Int!
+  createPostTelegramRelation(createPostTelegramRelationInput: CreatePostTelegramRelationInput!): PostTelegramRelation!
+  updatePostTelegramRelation(updatePostTelegramRelationInput: UpdatePostTelegramRelationInput!): Int!
+}
+
+input UpdateUserSettingInput {
+  telegram: Int
+  locale: String
+  timezone: String
+  verified_email: Boolean
+}
+
+input CreateSmmPackInput {
+  """Name of the SMM Pack"""
+  name: String
+
+  """System for chat gpt"""
+  system: String
+
+  """Language at which the generations will occur"""
+  language: String
+}
+
+input UpdateSmmPackInput {
+  """Name of the SMM Pack"""
+  name: String
+
+  """System for chat gpt"""
+  system: String
+
+  """Language at which the generations will occur"""
+  language: String
+  amount_of_users: Int
+}
+
+input CreateTgChannelInput {
+  """The id of the channel"""
+  id: Int!
+  username: String
+  smm_pack_id: String!
+  name: String!
+}
+
+input UpdateTgChannelInput {
+  username: String
+  name: String
+}
+
+input CreatePostInput {
+  text: String!
+  smm_pack_id: ID!
+  user_id: ID!
+}
+
+input UpdatePostInput {
+  status: post_status
+  send_at: DateTime
+  text: String
+}
+
+input CreatePostTelegramRelationInput {
+  tg_channel_id: Int!
+  post_id: ID!
+  tg_message_id: Float
+}
+
+input UpdatePostTelegramRelationInput {
+  tg_channel_id: Int!
+  post_id: ID!
+  tg_message_id: Float
+}
