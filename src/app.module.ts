@@ -13,6 +13,8 @@ import { PostModule } from './post/post.module';
 import { PostTelegramRelationModule } from './post_telegram_relation/post_telegram_relation.module';
 import { AuthModule } from './auth/auth.module';
 import { GoogleStrategy } from './auth/google/google.strategy';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -33,14 +35,17 @@ import { GoogleStrategy } from './auth/google/google.strategy';
         synchronize: false,
       }),
     }),
-    UsersModule,
-    UserSettingsModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/schema.gql',
       context: ({ req }) => ({ req }),
     }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', '..', 'public'),
+    // }),
     PassportModule.register({ session: true }),
+    UsersModule,
+    UserSettingsModule,
     UserSmmPackRelationModule,
     SmmPackModule,
     TgChannelsModule,

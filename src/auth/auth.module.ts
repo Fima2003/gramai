@@ -33,7 +33,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
       useClass: AuthService,
     },
     GoogleStrategy,
-    JwtStrategy
+    JwtStrategy,
   ],
 })
 export class AuthModule {}
