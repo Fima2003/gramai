@@ -20,7 +20,7 @@ export class AuthService {
     if (user) {
       return user.user_id;
     }
-    const newUser = await this.userRepository.create({
+    const newUser = this.userRepository.create({
       access: 'google',
     });
     const savedNewUser = await this.userRepository.save(newUser);

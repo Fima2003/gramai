@@ -3,9 +3,10 @@ import { UserSettingsService } from './user_settings.service';
 import { UserSettings } from './entities/user_setting.entity';
 import { UpdateUserSettingInput } from './dto/update-user_setting.input';
 import { UseGuards } from '@nestjs/common';
-import { GoogleAuthGuard } from 'src/auth/google/google.guard';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 
 @Resolver(() => UserSettings)
+@UseGuards(JwtAuthGuard)
 export class UserSettingsResolver {
   constructor(private readonly userSettingsService: UserSettingsService) {}
 
