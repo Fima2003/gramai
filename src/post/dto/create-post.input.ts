@@ -8,7 +8,4 @@ export class CreatePostInput {
 
   @Field(() => ID)
   smm_pack_id: string;
-
-  @Field(() => ID)
-  user_id: string;
 }

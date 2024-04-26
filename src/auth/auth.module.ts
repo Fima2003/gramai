@@ -9,7 +9,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './google/google.strategy';
 import { UsersModule } from 'src/users/users.module';
+import { JwtAuthGuard } from './jwt/jwt.guard';
 import { JwtStrategy } from './jwt/jwt.strategy';
+// import { JwtStrategy } from './jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -20,11 +22,12 @@ import { JwtStrategy } from './jwt/jwt.strategy';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET_KEY'),
-        signOptions: { expiresIn: '10m' },
+        global: true,
+        signOptions: { expiresIn: '60m' },
       }),
     }),
     TypeOrmModule.forFeature([User, UserSettings]),
-    UsersModule,
+    UsersModule
   ],
   controllers: [AuthController],
   providers: [

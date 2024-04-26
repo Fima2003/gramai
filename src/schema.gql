@@ -38,6 +38,25 @@ type SmmPack {
   updated_at: DateTime!
 }
 
+type Post {
+  id: ID!
+  status: post_status!
+  send_at: DateTime
+  text: String!
+  smm_pack_id: ID!
+  user_id: ID!
+  author: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+enum post_status {
+  WAITING
+  CREATED
+  SENT
+  CANCELLED
+}
+
 type UserSmmPackRelation {
   smm_pack_id: ID!
   user_id: ID!
@@ -52,24 +71,6 @@ type TgChannel {
   name: String!
 }
 
-type Post {
-  id: ID!
-  status: post_status!
-  send_at: DateTime
-  text: String!
-  smm_pack_id: ID!
-  user_id: ID!
-  created_at: DateTime!
-  updated_at: DateTime!
-}
-
-enum post_status {
-  WAITING
-  CREATED
-  SENT
-  CANCELLED
-}
-
 type PostTelegramRelation {
   tg_channel_id: Int!
   post_id: ID!
@@ -77,35 +78,29 @@ type PostTelegramRelation {
 }
 
 type Query {
-  users: [User!]
-  user(id: String!): User
-  userSettingsAll: [UserSettings!]
   userSettings(id: String!): UserSettings
-  usersSmmPackRelationship: [UserSmmPackRelation!]!
-  usersSmmPackRelationshipsByUserId(user_id: ID, pack_id: ID): [UserSmmPackRelation!]!
-  smmPacks: [SmmPack!]!
+  usersSmmPackRelationships(pack_id: ID): [UserSmmPackRelation!]!
+  post(id: ID!): Post
   smmPack(id: String!): SmmPack
   tgChannels: [TgChannel!]
   tgChannel(id: Int!): TgChannel
-  posts: [Post!]
-  post(id: ID!): Post
   postTelegramRelations: [PostTelegramRelation!]!
   postTelegramRelation(tg_channel_id: Int, post_id: String): PostTelegramRelation!
 }
 
 type Mutation {
-  removeUser(id: String!): Int!
-  updateUserSettings(id: String!, updateUserSettingInput: UpdateUserSettingInput!): Int
-  createUsersSmmPackRelationship(user_id: ID!, pack_id: ID!): UserSmmPackRelation!
-  createSmmPack(user_id: String!, createSmmPackInput: CreateSmmPackInput): SmmPack!
-  updateSmmPack(id: String!, updateSmmPackInput: UpdateSmmPackInput!): Int!
+  removeUser: Int!
+  updateUserSettings(updateUserSettingInput: UpdateUserSettingInput!): Int
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(id: String!, updatePostInput: UpdatePostInput!): Int!
+  removePost(id: ID!): Int!
+  createSmmPack(createSmmPackInput: CreateSmmPackInput): SmmPack!
+  updateSmmPack(pack_id: String!, updateSmmPackInput: UpdateSmmPackInput!): Int!
+  addUserToSmmPack(id_to_add: String!, pack_id: String!): Int!
   removeSmmPack(id: String!): Int!
   createTgChannel(createTgChannelInput: CreateTgChannelInput!): TgChannel!
   updateTgChannel(id: Float!, updateTgChannelInput: UpdateTgChannelInput!): Int!
   removeTgChannel(id: Int!): Int!
-  createPost(createPostInput: CreatePostInput!): Post!
-  updatePost(id: String!, updatePostInput: UpdatePostInput!): Int!
-  removePost(id: ID!): Int!
   createPostTelegramRelation(createPostTelegramRelationInput: CreatePostTelegramRelationInput!): PostTelegramRelation!
   updatePostTelegramRelation(updatePostTelegramRelationInput: UpdatePostTelegramRelationInput!): Int!
 }
@@ -115,6 +110,17 @@ input UpdateUserSettingInput {
   locale: String
   timezone: String
   verified_email: Boolean
+}
+
+input CreatePostInput {
+  text: String!
+  smm_pack_id: ID!
+}
+
+input UpdatePostInput {
+  status: post_status
+  send_at: DateTime
+  text: String
 }
 
 input CreateSmmPackInput {
@@ -151,18 +157,6 @@ input CreateTgChannelInput {
 input UpdateTgChannelInput {
   username: String
   name: String
-}
-
-input CreatePostInput {
-  text: String!
-  smm_pack_id: ID!
-  user_id: ID!
-}
-
-input UpdatePostInput {
-  status: post_status
-  send_at: DateTime
-  text: String
 }
 
 input CreatePostTelegramRelationInput {

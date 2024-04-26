@@ -1,7 +1,15 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { SmmPack } from 'src/smm_pack/entities/smm_pack.entity';
 import { UserSettings } from 'src/user_settings/entities/user_setting.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { PostStatus } from '../utils/post-status.enum';
 
 @ObjectType() // GraphQL Type
@@ -13,13 +21,13 @@ export class Post {
 
   @Field(() => PostStatus)
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: ['CREATED', 'SENT', 'CANCELLED', 'WAITING'],
-    default: 'CREATED'
+    default: 'CREATED',
   })
   status: PostStatus;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   @Column({ type: 'timestamp without time zone', nullable: true })
   send_at?: Date;
 
@@ -36,19 +44,31 @@ export class Post {
   user_id: string;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' }) // Automatically managed created_at timestamp
+  @Column({ type: 'text', nullable: true })
+  author: string;
+
+  @Field()
+  @CreateDateColumn({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  }) // Automatically managed created_at timestamp
   created_at: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' }) // Automatically managed updated_at timestamp
+  @UpdateDateColumn({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  }) // Automatically managed updated_at timestamp
   updated_at: Date;
 
   // Relationships
-  @ManyToOne(() => SmmPack, smmPack => smmPack.id, { onDelete: 'CASCADE' })
+  @ManyToOne(() => SmmPack, (smmPack) => smmPack.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'smm_pack_id' })
   smmPack: SmmPack;
 
-  @ManyToOne(() => UserSettings, userSettings => userSettings.user_id, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserSettings, (userSettings) => userSettings.user_id, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   userSettings: UserSettings;
 }
