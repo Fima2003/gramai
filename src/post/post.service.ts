@@ -73,6 +73,7 @@ export class PostService {
   }
 
   async onUserRemove(user: User) {
+    // TODO if a post hasn't been sent, then delete it
     const posts = await this.postRepo.find({ where: { user_id: user.id } });
     if (!posts) return null;
     for (const post of posts) {

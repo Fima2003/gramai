@@ -36,6 +36,7 @@ import { AuthModule } from './auth/auth.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/schema.gql',
       context: ({ req }) => ({ req }),
+      // playground: false,
     }),
     PassportModule.register({ session: true }),
     UsersModule,

@@ -11,6 +11,8 @@ import { GoogleStrategy } from './google/google.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { JwtAuthGuard } from './jwt/jwt.guard';
 import { JwtStrategy } from './jwt/jwt.strategy';
+import { TelegramStrategy } from './telegram/telegram.strategy';
+import { UserSettingsModule } from 'src/user_settings/user_settings.module';
 // import { JwtStrategy } from './jwt/jwt.strategy';
 
 @Module({
@@ -27,7 +29,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
       }),
     }),
     TypeOrmModule.forFeature([User, UserSettings]),
-    UsersModule
+    UserSettingsModule
   ],
   controllers: [AuthController],
   providers: [
@@ -37,6 +39,7 @@ import { JwtStrategy } from './jwt/jwt.strategy';
     },
     GoogleStrategy,
     JwtStrategy,
+    TelegramStrategy
   ],
 })
 export class AuthModule {}
