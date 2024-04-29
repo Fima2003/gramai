@@ -49,7 +49,6 @@ export class TgChannelsService {
     const relation = channels.find(
       (relation) => relation.smm_pack_id === tgChannel.smm_pack_id,
     );
-    console.log(relation);
     return relation != null;
   }
 

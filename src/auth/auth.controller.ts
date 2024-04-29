@@ -1,3 +1,4 @@
+import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import {
   Body,
@@ -5,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   InternalServerErrorException,
   Post,
   Query,
@@ -16,10 +18,15 @@ import { GoogleAuthGuard } from './google/google.guard';
 import { Request } from 'express';
 import { TelegramCallbackInput } from './telegram/telegramCallback.input';
 import { JwtAuthGuard } from './jwt/jwt.guard';
+import { CurrentUser } from 'src/common/paramDecorators/jwt-payload.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @Inject('AUTH_SERVICE')
+    private readonly authService: AuthService,
+  ) {}
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
   hangleLogin() {}
@@ -46,15 +53,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('telegram/login')
   @Render('index')
-  telegramLogin(@Req() req: Request) {
-    console.log(req.user);
-    const { id } = req.user as any;
-    return { user_id: id };
+  telegramLogin(@CurrentUser() req: JwtUserPayload) {
+    const { user_id } = req;
+    return { user_id: user_id, URL: process.env.URL };
   }
 
   @Get('telegram/callback')
-  handleTelegramCallback(@Query() query: TelegramCallbackInput) {
-
-    return { message: 'ID received successfully', user_id: query.user_id, telegram_id: query.id };
+  async handleTelegramCallback(@Query() query: TelegramCallbackInput) {
+    await this.authService.addTelegramToUser(query);
+    return { message: 'Successfully connected to telergam' };
   }
 }

@@ -43,6 +43,15 @@ export class PostResolver {
     return this.postService.findOne(id, user_id);
   }
 
+  @Query(() => [Post], { name: 'posts', nullable: true })
+  findBy(
+    @CurrentUser() { user_id: current_user_id }: JwtUserPayload,
+    @Args('pack_id', { nullable: true }) pack_id?: string,
+    @Args('user_id', { nullable: true }) user_id?: string,
+  ) {
+    return this.postService.findBy({ user_id, pack_id }, current_user_id);
+  }
+
   @Mutation(() => Int)
   updatePost(
     @Args('id') id: string,

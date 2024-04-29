@@ -15,6 +15,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { UserSettingsService } from 'src/user_settings/user_settings.service';
 import { SmmPack } from 'src/smm_pack/entities/smm_pack.entity';
+import { PostStatus } from './utils/post-status.enum';
 
 @Injectable()
 export class PostService {
@@ -28,10 +29,10 @@ export class PostService {
 
   async create(user_id: string, createPostInput: CreatePostInput) {
     const userSmmPackRelation =
-      await this.userSmmPackRelationService.findRelations(
-        {user_id,
-        pack_id: createPostInput.smm_pack_id,}
-      );
+      await this.userSmmPackRelationService.findRelations({
+        user_id,
+        pack_id: createPostInput.smm_pack_id,
+      });
     if (!userSmmPackRelation)
       throw new Error('No relation between user and the given pack');
     const user = await this.userSettingsService.findOne(user_id);
@@ -58,6 +59,21 @@ export class PostService {
     return post;
   }
 
+  async findBy({ user_id, pack_id }: { user_id?: string; pack_id?: string }, current_user_id: string) {
+    if(current_user_id !== user_id) throw new UnauthorizedException('Unauthorized');
+    // TODO if current_user_id and user_id are different, check that they have relation through any of the smm_packs
+    if(user_id && pack_id) {
+      return await this.postRepo.find({ where: { user_id, smm_pack_id: pack_id } });
+    }
+    if(user_id) {
+      return await this.postRepo.find({ where: { user_id } });
+    }
+    if(pack_id) {
+      return await this.postRepo.find({ where: { smm_pack_id: pack_id } });
+    }
+    return await this.postRepo.find();
+  }
+
   async update(
     post_id: string,
     user_id: string,
@@ -77,7 +93,11 @@ export class PostService {
     const posts = await this.postRepo.find({ where: { user_id: user.id } });
     if (!posts) return null;
     for (const post of posts) {
-      await this.postRepo.update(post.id, { user_id: null });
+      if (post.status != PostStatus.SENT) {
+        await this.postRepo.delete(post.id);
+      } else {
+        await this.postRepo.update(post.id, { user_id: null });
+      }
     }
     return posts.length;
   }
@@ -86,7 +106,11 @@ export class PostService {
     const posts = await this.postRepo.find({ where: { smm_pack_id: pack.id } });
     if (!posts) return null;
     for (const post of posts) {
-      await this.postRepo.update(post.id, { smm_pack_id: null });
+      if (post.status != PostStatus.SENT) {
+        await this.postRepo.delete(post.id);
+      } else {
+        await this.postRepo.update(post.id, { smm_pack_id: null });
+      }
     }
     return posts.length;
   }

@@ -43,7 +43,6 @@ export class SmmPackResolver {
 
   @Mutation(() => Int)
   addUserToSmmPack(@Args("id_to_add") id_to_add: string, @Args('pack_id') pack_id: string, @CurrentUser() {user_id} : JwtUserPayload){
-    console.log(user_id);
     return this.smmPackService.addUserToPack(id_to_add, pack_id, user_id);
   }
 

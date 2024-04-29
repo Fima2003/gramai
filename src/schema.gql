@@ -81,6 +81,7 @@ type Query {
   userSettings(id: String!): UserSettings
   usersSmmPackRelationships(pack_id: ID): [UserSmmPackRelation!]!
   post(id: ID!): Post
+  posts(pack_id: String, user_id: String): [Post!]
   smmPack(id: String!): SmmPack
   tgChannel(id: Int!): TgChannel
   postTelegramRelation(tg_channel_id: Int, post_id: String): PostTelegramRelation!

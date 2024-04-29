@@ -5,7 +5,7 @@ import { UserSettings } from 'src/user_settings/entities/user_setting.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './google/google.strategy';
 import { UsersModule } from 'src/users/users.module';
