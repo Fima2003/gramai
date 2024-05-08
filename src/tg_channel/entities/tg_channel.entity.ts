@@ -5,8 +5,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 @ObjectType()
 @Entity('tg_channel')
 export class TgChannel {
-  @Field(type => ID)
-  @PrimaryColumn() // Defaults to an integer-based primary key
+  @Field()
+  @PrimaryColumn({type: 'bigint'}) // Defaults to an integer-based primary key
   id: number;
 
   @Field({ nullable: true }) // Username can be null

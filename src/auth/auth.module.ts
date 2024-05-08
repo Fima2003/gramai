@@ -5,15 +5,12 @@ import { UserSettings } from 'src/user_settings/entities/user_setting.entity';
 import { User } from 'src/users/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { GoogleStrategy } from './google/google.strategy';
 import { UsersModule } from 'src/users/users.module';
-import { JwtAuthGuard } from './jwt/jwt.guard';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { TelegramStrategy } from './telegram/telegram.strategy';
-import { UserSettingsModule } from 'src/user_settings/user_settings.module';
-// import { JwtStrategy } from './jwt/jwt.strategy';
 
 @Module({
   imports: [
@@ -29,7 +26,7 @@ import { UserSettingsModule } from 'src/user_settings/user_settings.module';
       }),
     }),
     TypeOrmModule.forFeature([User, UserSettings]),
-    UserSettingsModule
+    UsersModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -39,7 +36,7 @@ import { UserSettingsModule } from 'src/user_settings/user_settings.module';
     },
     GoogleStrategy,
     JwtStrategy,
-    TelegramStrategy
+    TelegramStrategy,
   ],
 })
 export class AuthModule {}

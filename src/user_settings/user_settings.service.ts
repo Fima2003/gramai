@@ -18,9 +18,14 @@ export class UserSettingsService {
   findOne(id: string) {
     return this.userSettingsRepository.findOne({where: {user_id: id}});
   }
+  // TODO add object's type
+  async findOneBy(obj: any){
+    return this.userSettingsRepository.findOne({where: obj});
+  }
 
-  update(id: string, updateUserSettingInput: UpdateUserSettingInput) {
+  async update(id: string, updateUserSettingInput: UpdateUserSettingInput) {
     const result = this.userSettingsRepository.update(id, updateUserSettingInput);
-    return result.then((res) => res.affected);
+    const res = await result;
+    return res.affected;
   }
 }

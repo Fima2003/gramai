@@ -6,8 +6,7 @@ import {
   CreateDateColumn,
   OneToOne,
 } from 'typeorm';
-import { UserSettings } from '../../user_settings/entities/user_setting.entity'; // Update the path to where your entity is actually located
-// import { UserSmmPackRelation } from '../user_smm_pack_relation/user_smm_pack_relation.entity'; // Same here
+import { UserSettings } from '../../user_settings/entities/user_setting.entity';
 
 @ObjectType()
 @Entity('users')
@@ -23,6 +22,18 @@ export class User {
     nullable: false,
   })
   access: string;
+
+  @Field({ nullable: true })
+  @Column({ type: 'integer', nullable: true, unique: true })
+  telegram?: number;
+
+  @Field()
+  @Column({ type: 'boolean', default: false })
+  verified_email: boolean;
+
+  @Field()
+  @Column({ type: 'varchar', length: 255 })
+  email: string;
 
   @Field()
   @CreateDateColumn({

@@ -26,6 +26,10 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id } });
   }
 
+  findOneBy(obj: any, relations: boolean = false){
+    return this.userRepository.findOne({where: obj, relations: relations ? ['userSettings'] : []});
+  }
+
   async remove(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
     if(!user) return 0;

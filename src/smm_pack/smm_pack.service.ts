@@ -13,7 +13,6 @@ import { SmmPack } from './entities/smm_pack.entity';
 import { Repository } from 'typeorm';
 import { UserSmmPackRelationService } from 'src/users_smm_pack_relationship/users_smm_pack_relation.service';
 import { UsersService } from 'src/users/users.service';
-import { NotFoundError } from 'rxjs';
 import { PostService } from 'src/post/post.service';
 import { UserSmmPackRelation } from 'src/users_smm_pack_relationship/entities/users_smm_pack_relation.entity';
 

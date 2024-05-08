@@ -12,6 +12,9 @@ import { TgChannelsModule } from './tg_channel/tg_channels.module';
 import { PostModule } from './post/post.module';
 import { PostTelegramRelationModule } from './post_telegram_relation/post_telegram_relation.module';
 import { AuthModule } from './auth/auth.module';
+import { TelegramBotModule } from './telegram_bot/telegram_bot.module';
+import { RouterModule } from '@nestjs/core';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -24,10 +27,10 @@ import { AuthModule } from './auth/auth.module';
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
         host: 'localhost',
-        port: parseInt(configService.get("DB_PORT")),
-        username: configService.get("DATABASE_USERNAME"),
-        password: configService.get("DATABASE_PASSWORD"),
-        database: configService.get("DATABASE_NAME"),
+        port: parseInt(configService.get('DB_PORT')),
+        username: configService.get('DATABASE_USERNAME'),
+        password: configService.get('DATABASE_PASSWORD'),
+        database: configService.get('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
       }),
@@ -47,6 +50,8 @@ import { AuthModule } from './auth/auth.module';
     PostModule,
     PostTelegramRelationModule,
     AuthModule,
+    TelegramBotModule,
+    AiModule,
   ],
 })
 export class AppModule {}

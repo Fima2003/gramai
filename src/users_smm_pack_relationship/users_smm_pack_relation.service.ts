@@ -35,9 +35,11 @@ export class UserSmmPackRelationService {
   findRelations({
     user_id,
     pack_id,
+    relations = false,
   }: {
     user_id?: string;
     pack_id?: string;
+    relations?: boolean;
   }): Promise<UserSmmPackRelation[] | UserSmmPackRelation> {
     if (!user_id && !pack_id) {
       return this.userSmmPackRelationRepository.find();
@@ -45,11 +47,13 @@ export class UserSmmPackRelationService {
     if (user_id && !pack_id) {
       return this.userSmmPackRelationRepository.find({
         where: { user_id },
+        relations: relations ? ['smm_pack'] : [],
       });
     }
     if (!user_id && pack_id) {
       return this.userSmmPackRelationRepository.find({
         where: { smm_pack_id: pack_id },
+        relations: relations ? ['user'] : [],
       });
     }
     return this.userSmmPackRelationRepository.findOne({

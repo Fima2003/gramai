@@ -2,29 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserSettings {
-  user_id: ID!
-  full_name: String!
-  telegram: Float
-  locale: String!
-  timezone: String!
-  verified_email: Boolean!
-  email: String!
-  updated_at: DateTime!
-  user: User!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type User {
-  id: ID!
-  access: String!
-  created_at: DateTime!
-}
-
 type SmmPack {
   """UUID of smm pack"""
   id: ID!
@@ -36,6 +13,31 @@ type SmmPack {
   language: String!
   created_at: DateTime!
   updated_at: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type UserSettings {
+  user_id: ID!
+  full_name: String!
+  locale: String!
+  timezone: String!
+  current_smm_pack_tg: ID
+  updated_at: DateTime!
+  user: User!
+  current_smm_pack: SmmPack!
+}
+
+type User {
+  id: ID!
+  access: String!
+  telegram: Float
+  verified_email: Boolean!
+  email: String!
+  created_at: DateTime!
 }
 
 type Post {
@@ -64,7 +66,7 @@ type UserSmmPackRelation {
 }
 
 type TgChannel {
-  id: ID!
+  id: Float!
   username: String
   smm_pack_id: String!
   created_at: DateTime!
@@ -105,10 +107,9 @@ type Mutation {
 }
 
 input UpdateUserSettingInput {
-  telegram: Int
+  current_smm_pack_tg: String
   locale: String
   timezone: String
-  verified_email: Boolean
 }
 
 input CreatePostInput {

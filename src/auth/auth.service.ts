@@ -16,18 +16,18 @@ export class AuthService {
   ) {}
 
   async validateUserGoogle(details: UserDetails): Promise<any> {
-    const user = await this.userSettingsRepository.findOneBy({
+    const user = await this.userRepository.findOneBy({
       email: details.email,
     });
     if (user) {
-      return user.user_id;
+      return user.id;
     }
     const newUser = this.userRepository.create({
       access: 'google',
+      email: details.email,
     });
     const savedNewUser = await this.userRepository.save(newUser);
     const newUserSettings = this.userSettingsRepository.create({
-      email: details.email,
       full_name: details.displayName,
       user_id: savedNewUser.id,
     });
@@ -50,21 +50,20 @@ export class AuthService {
   }
 
   async addTelegramToUser({ user_id, ...rest }: TelegramCallbackInput) {
-    // const { user_id, ...rest } = query;
     if (this.checkTelegramHash(rest) === false) {
       throw new HttpException('Invalid hash', HttpStatus.I_AM_A_TEAPOT);
     }
-    const user = await this.userSettingsRepository.findOneBy({
+    const user = await this.userRepository.findOneBy({
       telegram: parseInt(rest.id),
     });
-    if (user.user_id != user_id && user) {
+    if (user && user.id != user_id ) {
       throw new HttpException(
         'Telegram account already linked',
         HttpStatus.CONFLICT,
       );
     }
     return (
-      await this.userSettingsRepository.update(user_id, {
+      await this.userRepository.update(user_id, {
         telegram: parseInt(rest.id),
       })
     ).affected;
