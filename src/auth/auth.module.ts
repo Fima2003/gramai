@@ -21,7 +21,7 @@ import { SmmPackModule } from 'src/smm_pack/smm_pack.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET_KEY'),
+        secret: process.env.JWT_SECRET_KEY,
         global: true,
       }),
     }),

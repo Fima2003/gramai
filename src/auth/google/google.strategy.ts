@@ -8,14 +8,13 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
-    configService: ConfigService,
     @Inject('AUTH_SERVICE') private readonly authService: AuthService,
   ) {
     super({
-      clientID: configService.get('GOOGLE_CLIENT_ID'),
-      clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
-      callbackURL: 'http://localhost:3001/api/auth/google/redirect',
-      // callbackURL: `${configService.get('URL')}/api/auth/google/redirect`,
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      // callbackURL: 'http://localhost:3001/api/auth/google/redirect',
+      callbackURL: `${process.env.URL}/api/auth/google/redirect`,
       passReqToCallback: true,
       scope: ['profile', 'email'],
     });

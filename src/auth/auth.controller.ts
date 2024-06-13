@@ -61,10 +61,12 @@ export class AuthController {
   async handleTelegramCallback(@Query() query: TelegramCallbackInput) {
     const full_name = await this.authService.addTelegramToUser(query);
     const { user_id, id: telegram_id, first_name: telegram_first_name } = query;
+    console.log(process.env.JWT_SECRET_KEY);
     const access_token = await this.jwtService.signAsync({
       user_id: query.user_id,
       telegram_id: query.id,
     });
+    console.log(access_token);
     return {
       url: this.generateLink({
         access_token,
