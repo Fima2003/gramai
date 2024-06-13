@@ -11,6 +11,7 @@ import { GoogleStrategy } from './google/google.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { TelegramStrategy } from './telegram/telegram.strategy';
+import { SmmPackModule } from 'src/smm_pack/smm_pack.module';
 
 @Module({
   imports: [
@@ -22,11 +23,11 @@ import { TelegramStrategy } from './telegram/telegram.strategy';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET_KEY'),
         global: true,
-        signOptions: { expiresIn: '60m' },
       }),
     }),
     TypeOrmModule.forFeature([User, UserSettings]),
     UsersModule,
+    SmmPackModule,
   ],
   controllers: [AuthController],
   providers: [

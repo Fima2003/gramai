@@ -16,7 +16,7 @@ export class SmmPack {
 
   @Field(() => Int, { description: 'Amount of Users' })
   @Column({
-    type: "int",
+    type: 'int',
     nullable: false,
     default: 1,
   })
@@ -31,7 +31,7 @@ export class SmmPack {
   })
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: 'text',
     nullable: true,

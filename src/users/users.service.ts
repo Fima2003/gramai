@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
 
-    @Inject(PostService)
+    @Inject(forwardRef(() => PostService))
     private readonly postService: PostService,
 
     @Inject(forwardRef(() => SmmPackService))
@@ -26,13 +26,16 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  findOneBy(obj: any, relations: boolean = false){
-    return this.userRepository.findOne({where: obj, relations: relations ? ['userSettings'] : []});
+  findOneBy(obj: any, relations: boolean = false) {
+    return this.userRepository.findOne({
+      where: obj,
+      relations: relations ? ['userSettings'] : [],
+    });
   }
 
   async remove(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
-    if(!user) return 0;
+    if (!user) return 0;
     await this.postService.onUserRemove(user);
     await this.smmPackService.deleteSingleSmmPack(id);
     const result = await this.userRepository.delete(id);

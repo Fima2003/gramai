@@ -12,6 +12,8 @@ import { CurrentUser } from 'src/common/paramDecorators/jwt-payload.decorator';
 export class SmmPackResolver {
   constructor(private readonly smmPackService: SmmPackService) {}
 
+
+  // TODO create a custom response that would take template(f.e. SmmPack), but have a general response data, message, error, code
   @Mutation(() => SmmPack)
   createSmmPack(
     @CurrentUser() { user_id }: JwtUserPayload,

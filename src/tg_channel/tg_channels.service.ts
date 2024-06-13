@@ -32,6 +32,17 @@ export class TgChannelsService {
     return this.tgChannelRepo.find();
   }
 
+  findBySmmPack(smm_pack_id: string, user_id: string) {
+    const relation = this.userSmmPackRelationService.findRelations({
+      user_id,
+      pack_id: smm_pack_id,
+    });
+    if (!relation) {
+      throw new UnauthorizedException();
+    }
+    return this.tgChannelRepo.find({ where: { smm_pack_id } });
+  }
+
   findOne(id: number) {
     return this.tgChannelRepo.findOne({ where: { id } });
   }

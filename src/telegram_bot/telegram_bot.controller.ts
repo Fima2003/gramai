@@ -20,6 +20,11 @@ export class TelegramBotController {
     const path: string = req.path;
     const token = path.split('/').pop();
 
+    if (token == 'start-conversation'){
+      const started = await this.botService.startConversation(req.body.telegram_id);
+      return started ? res.status(200).send({message: "Conversation started"}) : res.status(404).send({error: 'Not Found'});
+    }
+
     if (token !== process.env.BOT_TOKEN) {
       return res.status(404).send('Not Found');
     }

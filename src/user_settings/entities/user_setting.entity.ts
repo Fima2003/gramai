@@ -23,6 +23,10 @@ export class UserSettings {
   @Column({ type: 'varchar', length: 50 })
   full_name: string;
 
+  @Field()
+  @Column({ type: 'varchar', length: 50 })
+  telegram_first_name: string;
+
   @Column({ nullable: true, type: 'varchar', length: 20 })
   pswd?: string;
 

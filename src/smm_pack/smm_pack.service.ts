@@ -33,17 +33,21 @@ export class SmmPackService {
   ) {}
 
   async create(user_id: string, createSmmPackInput: CreateSmmPackInput) {
-    const user = await this.usersService.findOne(user_id);
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      const user = await this.usersService.findOne(user_id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const newSmmPack = this.smmPackRepository.create(createSmmPackInput);
+      const savedNewSMMPack = await this.smmPackRepository.save(newSmmPack);
+      this.userPackRelationService.create({
+        user_id,
+        smm_pack_id: savedNewSMMPack.id,
+      });
+      return savedNewSMMPack;
+    } catch (error) {
+      return error;
     }
-    const newSmmPack = this.smmPackRepository.create(createSmmPackInput);
-    const savedNewSMMPack = await this.smmPackRepository.save(newSmmPack);
-    this.userPackRelationService.create({
-      user_id,
-      smm_pack_id: savedNewSMMPack.id,
-    });
-    return savedNewSMMPack;
   }
 
   findAll() {
@@ -96,7 +100,7 @@ export class SmmPackService {
       user_id,
       pack_id,
     });
-    if(relation !== null){
+    if (relation !== null) {
       return 0;
     }
     await this.userPackRelationService.create({

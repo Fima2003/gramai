@@ -15,6 +15,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
       callbackURL: 'http://localhost:3001/api/auth/google/redirect',
+      // callbackURL: `${configService.get('URL')}/api/auth/google/redirect`,
       passReqToCallback: true,
       scope: ['profile', 'email'],
     });
@@ -29,16 +30,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<void> {
     try {
       const { emails, displayName } = profile;
-      const user_id = await this.authService.validateUserGoogle({
+      const user = await this.authService.validateUserGoogle({
         email: emails[0].value,
         displayName,
       });
-      const user = {
-        id: user_id,
-        accessToken,
-        refreshToken,
+      const userReq = {
+        user_id: user.id,
+        telegram_id: user.telegram,
+        full_name: user.userSettings.full_name,
+        telegram_first_name: user.userSettings.telegram_first_name,
       };
-      return done(null, user || null);
+      return done(null, userReq || null);
     } catch (error) {
       return done(error);
     }

@@ -33,14 +33,16 @@ export class UserSmmPackRelationResolver {
   @Query(() => [UserSmmPackRelation], {
     name: 'usersSmmPackRelationships',
   })
-  findBy(
+  async findBy(
     @CurrentUser() { user_id }: JwtUserPayload,
-    // @Args('user_id', { type: () => ID, nullable: true }) user_id?: string,
     @Args('pack_id', { type: () => ID, nullable: true }) pack_id?: string,
+    @Args('relations', { type: () => Boolean, nullable: true })
+    relations?: boolean,
   ) {
-    const res = this.usersSmmPackRelationService.findRelations({
+    const res = await this.usersSmmPackRelationService.findRelations({
       user_id,
       pack_id,
+      relations,
     });
     return res;
   }

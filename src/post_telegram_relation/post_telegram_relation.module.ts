@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PostTelegramRelationService } from './post_telegram_relation.service';
 import { PostTelegramRelationResolver } from './post_telegram_relation.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,7 +9,7 @@ import { PostModule } from 'src/post/post.module';
 import { TgChannelsModule } from 'src/tg_channel/tg_channels.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PostTelegramRelation]), UserSmmPackRelationModule, TgChannelsModule, PostModule],
+  imports: [TypeOrmModule.forFeature([PostTelegramRelation]), UserSmmPackRelationModule, TgChannelsModule, (forwardRef(() => PostModule))],
   providers: [PostTelegramRelationResolver, PostTelegramRelationService, JwtService],
   exports: [PostTelegramRelationService]
 })

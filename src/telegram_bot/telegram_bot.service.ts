@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import * as TelegramBot from 'node-telegram-bot-api';
 import { UserSmmPackRelation } from 'src/users_smm_pack_relationship/entities/users_smm_pack_relation.entity';
 import { CallbackQuery, Message } from 'node-telegram-bot-api';
 import { UserSettingsService } from 'src/user_settings/user_settings.service';
 import { UserSmmPackRelationService } from 'src/users_smm_pack_relationship/users_smm_pack_relation.service';
-import { SmmPackService } from 'src/smm_pack/smm_pack.service';
 import { UsersService } from 'src/users/users.service';
 import { TgChannelsService } from 'src/tg_channel/tg_channels.service';
+import { IPostTo } from 'src/post/dto/post-settings';
 
 @Injectable()
 export class TelegramBotService {
@@ -15,7 +15,7 @@ export class TelegramBotService {
     @Inject(UserSettingsService)
     private usersSettingsService: UserSettingsService,
 
-    @Inject(UsersService)
+    @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
 
     @Inject(UserSmmPackRelationService)
@@ -23,9 +23,6 @@ export class TelegramBotService {
 
     @Inject(TgChannelsService)
     private tgChannelsService: TgChannelsService,
-
-    // @Inject(SmmPackService)
-    // private smmPackService: SmmPackService,
   ) {
     this.bot = new TelegramBot(process.env.BOT_TOKEN);
 
@@ -38,11 +35,36 @@ export class TelegramBotService {
     });
   }
 
+  async sendPost(text: string, post_to: IPostTo[]): Promise<number[] | false> {
+    try {
+      let sent_to = [];
+      post_to.forEach(async (postTo: IPostTo) => {
+        if (postTo.sm === 'telegram') {
+          await this.sendMessageToTelegram(parseInt(postTo.id), text);
+        }
+        sent_to.push(parseInt(postTo.id));
+      });
+      return sent_to;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async startConversation(chatId: number) {
-    this.bot.sendMessage(
-      chatId,
-      'Shalom, brother! Welcome! Welcome to AIGram! With me you can add a new telegram channel if you want, or you can ',
-    );
+    // check that there exists a user with the telegram id
+    try {
+      const user = await this.usersService.findOneBy({ telegram: chatId });
+      if (!user) {
+        return false;
+      }
+      this.bot.sendMessage(
+        chatId,
+        'Shalom and Welcome! Welcome to AIGram! With me you can add a new telegram channel. To do that, simply give me admin rights in the channel and forward any message from the channel to me. I am waiting!',
+      );
+      return true;
+    } catch (error) {
+      throw new Error('Error starting conversation');
+    }
   }
 
   async setWebhook() {
@@ -161,7 +183,10 @@ export class TelegramBotService {
     const isAdmin = await this.bot
       .getChatMember(chatId, userId)
       .then((chatMember) => {
-        return chatMember.status === 'administrator' || chatMember.status === 'creator';
+        return (
+          chatMember.status === 'administrator' ||
+          chatMember.status === 'creator'
+        );
       })
       .catch(() => false);
     if (!isAdmin) {
@@ -212,6 +237,6 @@ export class TelegramBotService {
   }
 
   async sendMessageToTelegram(chatId: number, text: string) {
-    return this.bot.sendMessage(chatId, text);
+    const message = await this.bot.sendMessage(chatId, text);
   }
 }

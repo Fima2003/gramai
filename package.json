@@ -41,6 +41,7 @@
     "graphql": "^16.8.1",
     "hbs": "^4.2.0",
     "helmet": "^7.1.0",
+    "madge": "^7.0.0",
     "node-telegram-bot-api": "^0.65.1",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",

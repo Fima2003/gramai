@@ -3,7 +3,6 @@ import { CreateUsersSmmPackRelationshipInput } from './dto/create-users_smm_pack
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserSmmPackRelation } from './entities/users_smm_pack_relation.entity';
 import { Repository } from 'typeorm';
-import { SmmPack } from 'src/smm_pack/entities/smm_pack.entity';
 
 @Injectable()
 export class UserSmmPackRelationService {
@@ -32,7 +31,7 @@ export class UserSmmPackRelationService {
     return this.userSmmPackRelationRepository.find();
   }
 
-  findRelations({
+  async findRelations({
     user_id,
     pack_id,
     relations = false,
@@ -42,21 +41,21 @@ export class UserSmmPackRelationService {
     relations?: boolean;
   }): Promise<UserSmmPackRelation[] | UserSmmPackRelation> {
     if (!user_id && !pack_id) {
-      return this.userSmmPackRelationRepository.find();
+      return await this.userSmmPackRelationRepository.find();
     }
     if (user_id && !pack_id) {
-      return this.userSmmPackRelationRepository.find({
+      return await this.userSmmPackRelationRepository.find({
         where: { user_id },
         relations: relations ? ['smm_pack'] : [],
       });
     }
     if (!user_id && pack_id) {
-      return this.userSmmPackRelationRepository.find({
+      return await this.userSmmPackRelationRepository.find({
         where: { smm_pack_id: pack_id },
         relations: relations ? ['user'] : [],
       });
     }
-    return this.userSmmPackRelationRepository.findOne({
+    return await this.userSmmPackRelationRepository.findOne({
       where: { user_id, smm_pack_id: pack_id },
       relations: ['smm_pack'],
     });

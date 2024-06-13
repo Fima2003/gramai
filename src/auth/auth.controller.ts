@@ -1,21 +1,17 @@
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import {
-  Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Inject,
   InternalServerErrorException,
-  Post,
   Query,
+  Redirect,
   Render,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { GoogleAuthGuard } from './google/google.guard';
-import { Request } from 'express';
 import { TelegramCallbackInput } from './telegram/telegramCallback.input';
 import { JwtAuthGuard } from './jwt/jwt.guard';
 import { CurrentUser } from 'src/common/paramDecorators/jwt-payload.decorator';
@@ -31,12 +27,15 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   hangleLogin() {}
 
-  @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
+  @Redirect()
+  @Get('google/redirect')
   async hangleRedirect(@Req() req) {
     const access_token = await this.jwtService.signAsync({
-      user_id: req.user.id,
+      user_id: req.user.user_id,
+      telegram_id: req.user.telegram_id,
     });
+
     if (!access_token) {
       throw new InternalServerErrorException();
     }
@@ -45,8 +44,7 @@ export class AuthController {
     }
 
     return {
-      message: 'User information from google',
-      access_token: access_token,
+      url: this.generateLink({ access_token, ...req.user }),
     };
   }
 
@@ -58,9 +56,39 @@ export class AuthController {
     return { user_id: user_id, URL: process.env.URL };
   }
 
+  @Redirect()
   @Get('telegram/callback')
   async handleTelegramCallback(@Query() query: TelegramCallbackInput) {
-    await this.authService.addTelegramToUser(query);
-    return { message: 'Successfully connected to telergam' };
+    const full_name = await this.authService.addTelegramToUser(query);
+    const { user_id, id: telegram_id, first_name: telegram_first_name } = query;
+    const access_token = await this.jwtService.signAsync({
+      user_id: query.user_id,
+      telegram_id: query.id,
+    });
+    return {
+      url: this.generateLink({
+        access_token,
+        full_name,
+        user_id,
+        telegram_id,
+        telegram_first_name,
+      }),
+    };
+  }
+
+  generateLink(params: {
+    access_token: string;
+    user_id: string;
+    full_name: string;
+    telegram_id?: string;
+    telegram_first_name?: string;
+  }) {
+    const url = new URL(`${process.env.FRONT_URL}/redirect`);
+    Object.keys(params).forEach((key) => {
+      if (params[key] !== undefined && params[key] !== null) {
+        url.searchParams.append(key, params[key]);
+      }
+    });
+    return url.toString();
   }
 }

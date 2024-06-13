@@ -32,6 +32,7 @@ export class UserSmmPackRelation {
   })
   created_at: Date;
 
+  @Field()
   @ManyToOne(() => SmmPack, (smmPack) => smmPack.id, {
     onDelete: 'CASCADE',
   })

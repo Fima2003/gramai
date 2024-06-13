@@ -5,35 +5,37 @@ import {
   Args,
   Int,
   ID,
-  Context,
-  GqlExecutionContext,
 } from '@nestjs/graphql';
 import { PostService } from './post.service';
 import { Post } from './entities/post.entity';
-import { CreatePostInput } from './dto/create-post.input';
+
 import { UpdatePostInput } from './dto/update-post.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/paramDecorators/jwt-payload.decorator';
+import { GeneratePostInput } from './dto/generate-post.input';
+import { PublishPostInput } from './dto/publish-post.input';
 
 @Resolver(() => Post)
 @UseGuards(JwtAuthGuard)
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
-  @Mutation(() => Post)
-  createPost(
-    @Args('createPostInput') createPostInput: CreatePostInput,
+  @Mutation(() => Post, { name: 'generatePost' })
+  generatePost(
+    @Args('generatePostInput') generatePostInput: GeneratePostInput,
     @CurrentUser() { user_id }: JwtUserPayload,
   ) {
-    return this.postService.create(user_id, createPostInput);
+    return this.postService.generate(user_id, generatePostInput);
   }
 
-  // TODO SHOULD BE ONLY ACCESSIBLE BY ADMIN
-  // @Query(() => [Post], { name: 'posts', nullable: true })
-  // findAll() {
-  //   return this.postService.findAll();
-  // }
+  @Mutation(() => Boolean)
+  publishPost(
+    @Args('publishPostInput') publishPostInput: PublishPostInput,
+    @CurrentUser() { user_id }: JwtUserPayload,
+  ){
+    return this.postService.publish(user_id, publishPostInput);
+  }
 
   @Query(() => Post, { name: 'post', nullable: true })
   findOne(

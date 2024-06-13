@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { CreatePostTelegramRelationInput } from './dto/create-post_telegram_relation.input';
 import { UpdatePostTelegramRelationInput } from './dto/update-post_telegram_relation.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,9 +18,13 @@ export class PostTelegramRelationService {
   constructor(
     @InjectRepository(PostTelegramRelation)
     private readonly postTelegramRelationRepo: Repository<PostTelegramRelation>,
-    @Inject(PostService) private readonly postService: PostService,
+
+    @Inject(forwardRef(() => PostService))
+    private readonly postService: PostService,
+
     @Inject(TgChannelsService)
     private readonly tgChannelsService: TgChannelsService,
+
     @Inject(UserSmmPackRelationService)
     private readonly userSmmPackRelationService: UserSmmPackRelationService,
   ) {}
@@ -69,7 +78,11 @@ export class PostTelegramRelationService {
     return this.postTelegramRelationRepo.find();
   }
 
-  async findRelations(user_id: string, post_id?: string, tg_channel_id?: number) {
+  async findRelations(
+    user_id: string,
+    post_id?: string,
+    tg_channel_id?: number,
+  ) {
     if (!post_id && !tg_channel_id) {
       return await this.postTelegramRelationRepo.find();
     }
@@ -83,24 +96,25 @@ export class PostTelegramRelationService {
         where: { tg_channel_id },
       });
     }
-    await this.relationExists(
-      post_id,
-      tg_channel_id,
-      user_id,
-    );
+    await this.relationExists(post_id, tg_channel_id, user_id);
     return this.postTelegramRelationRepo.findOne({
       where: { post_id, tg_channel_id },
       relations: ['tg_channel', 'post'],
     });
   }
 
-  async update(updatePostTelegramRelationInput: UpdatePostTelegramRelationInput, user_id: string) {
+  async update(
+    updatePostTelegramRelationInput: UpdatePostTelegramRelationInput,
+    user_id: string,
+  ) {
     const { post_id, tg_channel_id, tg_message_id } =
       updatePostTelegramRelationInput;
     await this.relationExists(post_id, tg_channel_id, user_id);
-    return (await this.postTelegramRelationRepo.update(
-      { post_id, tg_channel_id },
-      { tg_message_id },
-    )).affected;
+    return (
+      await this.postTelegramRelationRepo.update(
+        { post_id, tg_channel_id },
+        { tg_message_id },
+      )
+    ).affected;
   }
 }

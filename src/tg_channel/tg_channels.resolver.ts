@@ -27,10 +27,18 @@ export class TgChannelsResolver {
   //   return this.tgChannelsService.findAll();
   // }
 
+  @UseGuards(JwtAuthGuard)
   @Query(() => TgChannel, { name: 'tgChannel', nullable: true })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.tgChannelsService.findOne(id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [TgChannel], { name: 'tgChannelsBySmmPack' })
+  findBySmmPack(@Args('smm_pack_id', { type: () => String }) smm_pack_id: string, @CurrentUser() { user_id }: JwtUserPayload) {
+    return this.tgChannelsService.findBySmmPack(smm_pack_id, user_id);
+  }
+
 
   @Mutation(() => Int)
   updateTgChannel(
