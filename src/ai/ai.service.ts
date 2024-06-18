@@ -12,6 +12,13 @@ export class AiService {
     language: string,
     sources: string[],
   ): Promise<any> {
+    const finalPrompt = this.generatePrompt(
+      prompt,
+      language,
+      positive_keys,
+      negative_keys,
+      sources,
+    );
     const options = {
       method: 'POST',
       url: 'https://api.edenai.run/v2/text/generation',
@@ -22,13 +29,7 @@ export class AiService {
         response_as_dict: true,
         providers: ['openai'],
         fallback_providers: ['amazon,cohere'],
-        text: this.generatePrompt(
-          prompt,
-          language,
-          positive_keys,
-          negative_keys,
-          sources,
-        ),
+        text: finalPrompt,
         chatbot_global_action: system,
         temperature: 0.2,
         max_tokens: 250,

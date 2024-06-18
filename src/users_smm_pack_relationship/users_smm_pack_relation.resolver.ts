@@ -39,11 +39,14 @@ export class UserSmmPackRelationResolver {
     @Args('relations', { type: () => Boolean, nullable: true })
     relations?: boolean,
   ) {
-    const res = await this.usersSmmPackRelationService.findRelations({
-      user_id,
-      pack_id,
-      relations,
-    });
-    return res;
+    try {
+      const res = await this.usersSmmPackRelationService.findRelations({
+        user_id,
+        pack_id,
+        relations,
+      });
+      return res;
+    } catch (e) {
+    }
   }
 }

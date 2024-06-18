@@ -24,8 +24,8 @@ export class User {
   access: string;
 
   @Field({ nullable: true })
-  @Column({ type: 'integer', nullable: true, unique: true })
-  telegram?: number;
+  @Column({ type: 'varchar', nullable: true, unique: true })
+  telegram?: string;
 
   @Field()
   @Column({ type: 'boolean', default: false })

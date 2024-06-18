@@ -13,7 +13,6 @@ import { PostModule } from './post/post.module';
 import { PostTelegramRelationModule } from './post_telegram_relation/post_telegram_relation.module';
 import { AuthModule } from './auth/auth.module';
 import { TelegramBotModule } from './telegram_bot/telegram_bot.module';
-import { RouterModule } from '@nestjs/core';
 import { AiModule } from './ai/ai.module';
 
 @Module({

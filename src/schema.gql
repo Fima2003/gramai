@@ -35,7 +35,7 @@ type UserSettings {
 type User {
   id: ID!
   access: String!
-  telegram: Float
+  telegram: String
   verified_email: Boolean!
   email: String!
   created_at: DateTime!

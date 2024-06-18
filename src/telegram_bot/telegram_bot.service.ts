@@ -88,7 +88,7 @@ export class TelegramBotService {
       // TODO add markuop so that link has an actual link in it
       this.bot.sendMessage(
         telegram,
-        "You are not registered or not haven't linked your account to telegram. Please, visit this link to link your account: ",
+        "You are not registered or not haven't linked your account to telegram. Please, visit smm.telesens.ua and link your account to telegram.",
       );
       return;
     }

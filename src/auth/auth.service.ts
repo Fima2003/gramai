@@ -65,7 +65,7 @@ export class AuthService {
     }
     const userByTelegram= await this.userRepository.findOne({
       where: {
-        telegram: parseInt(rest.id),
+        telegram: rest.id,
       },
       relations: ['userSettings'],
     });
@@ -76,7 +76,7 @@ export class AuthService {
       );
     }
     await this.userRepository.update(user_id, {
-      telegram: parseInt(rest.id),
+      telegram: rest.id,
     });
 
     const user = await this.userRepository.findOne({
